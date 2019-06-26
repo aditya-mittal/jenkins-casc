@@ -71,3 +71,5 @@ unclassified:
     permissionToCollectAnonymousUsageStatistics: false
   timestamperConfig:
     allPipelines: true
+jobs:
+  - file: /usr/share/jenkins/ref/casc-configs/seed.groovy
