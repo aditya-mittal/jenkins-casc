@@ -72,4 +72,73 @@ unclassified:
   timestamperConfig:
     allPipelines: true
 jobs:
+  - script: >
+      folder('freestyle')
+  - script: >
+      folder('pipeline')
+  - script: >
+      freeStyleJob('freestyle/seedjob') {
+        steps {
+          jobDsl {
+            scriptText("""
+              pipelineJob('freestyle/seeded-pipeline-1') {
+                definition {
+                  cps {
+                    script (\"""
+                      pipeline {
+                          agent any
+                          stages {
+                              stage('build') {
+                                  steps {
+                                      sh script: 'echo "Build"'
+                                  }
+                              }
+                              stage('test') {
+                                  steps{
+                                      sh script : 'echo "Test"'
+                                  }
+                              }
+                              stage('publish') {
+                                  steps{
+                                      sh script : 'echo "Publish"'
+                                  }
+                              }
+                          }
+                      }\""".stripIndent()
+                    )
+                  }
+                }
+              }
+              pipelineJob('freestyle/seeded-pipeline-2') {
+                definition {
+                  cps {
+                    script (\"""
+                      pipeline {
+                          agent any
+                          stages {
+                              stage('build') {
+                                  steps {
+                                      sh script: 'echo "Build"'
+                                  }
+                              }
+                              stage('test') {
+                                  steps{
+                                      sh script : 'echo "Test"'
+                                  }
+                              }
+                              stage('publish') {
+                                  steps{
+                                      sh script : 'echo "Publish"'
+                                  }
+                              }
+                          }
+                      }\""".stripIndent()
+                    )
+                  }
+                }
+              }
+            """.stripIndent())
+          }
+        }
+      }
   - file: /usr/share/jenkins/ref/casc-configs/seed.groovy

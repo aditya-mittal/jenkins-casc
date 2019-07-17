@@ -1,4 +1,4 @@
-pipelineJob('seed-job') {
+pipelineJob('pipeline/seedjob') {
     description("Auto-generated seed job")
     definition {
         cps {
@@ -6,10 +6,10 @@ pipelineJob('seed-job') {
                 pipeline {
                     agent any
                     stages {
-                        stage('seed-jobs') {
+                        stage('process-job-dsls') {
                             steps {
                                 jobDsl scriptText: '''
-                                    pipelineJob('seeded-pipeline-1') {
+                                    pipelineJob('pipeline/seeded-pipeline-1') {
                                       definition {
                                         cps {
                                           script (\"""
@@ -37,7 +37,7 @@ pipelineJob('seed-job') {
                                         }
                                       }
                                     }
-                                    pipelineJob('seeded-pipeline-2') {
+                                    pipelineJob('pipeline/seeded-pipeline-2') {
                                       definition {
                                         cps {
                                           script (\"""
