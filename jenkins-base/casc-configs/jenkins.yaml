@@ -2,51 +2,51 @@ jenkins:
   authorizationStrategy:
     globalMatrix:
       permissions:
-      - "Agent/Build:admin"
-      - "Agent/Configure:admin"
-      - "Agent/Connect:admin"
-      - "Agent/Create:admin"
-      - "Agent/Delete:admin"
-      - "Agent/Disconnect:admin"
-      - "Credentials/Create:admin"
-      - "Credentials/Delete:admin"
-      - "Credentials/ManageDomains:admin"
-      - "Credentials/Update:admin"
-      - "Credentials/View:admin"
-      - "Job/Build:admin"
-      - "Job/Cancel:admin"
-      - "Job/Configure:admin"
-      - "Job/Create:admin"
-      - "Job/Delete:admin"
-      - "Job/Discover:admin"
-      - "Job/Move:admin"
-      - "Job/Read:admin"
-      - "Job/Workspace:admin"
-      - "Lockable Resources/Reserve:admin"
-      - "Lockable Resources/Unlock:admin"
-      - "Overall/Administer:admin"
-      - "Overall/Read:admin"
-      - "Run/Delete:admin"
-      - "Run/Replay:admin"
-      - "Run/Update:admin"
-      - "SCM/Tag:admin"
-      - "View/Configure:admin"
-      - "View/Create:admin"
-      - "View/Delete:admin"
-      - "View/Read:admin"
-      - "Overall/Read:read-only"
-      - "Job/Read:read-only"
-      - "View/Read:read-only"
-      - "Credentials/View:read-only"
+        - "Agent/Build:admin"
+        - "Agent/Configure:admin"
+        - "Agent/Connect:admin"
+        - "Agent/Create:admin"
+        - "Agent/Delete:admin"
+        - "Agent/Disconnect:admin"
+        - "Credentials/Create:admin"
+        - "Credentials/Delete:admin"
+        - "Credentials/ManageDomains:admin"
+        - "Credentials/Update:admin"
+        - "Credentials/View:admin"
+        - "Job/Build:admin"
+        - "Job/Cancel:admin"
+        - "Job/Configure:admin"
+        - "Job/Create:admin"
+        - "Job/Delete:admin"
+        - "Job/Discover:admin"
+        - "Job/Move:admin"
+        - "Job/Read:admin"
+        - "Job/Workspace:admin"
+        - "Lockable Resources/Reserve:admin"
+        - "Lockable Resources/Unlock:admin"
+        - "Overall/Administer:admin"
+        - "Overall/Read:admin"
+        - "Run/Delete:admin"
+        - "Run/Replay:admin"
+        - "Run/Update:admin"
+        - "SCM/Tag:admin"
+        - "View/Configure:admin"
+        - "View/Create:admin"
+        - "View/Delete:admin"
+        - "View/Read:admin"
+        - "Overall/Read:read-only"
+        - "Job/Read:read-only"
+        - "View/Read:read-only"
+        - "Credentials/View:read-only"
   securityRealm:
     local:
       allowsSignup: false
       enableCaptcha: false
       users:
-      - id: "admin"
-        password: ${JENKINS_PASSWORD}
-      - id: "read-only"
-        password: ${JENKINS_READ_ONLY_PASSWORD}
+        - id: "admin"
+          password: ${JENKINS_PASSWORD}
+        - id: "read-only"
+          password: ${JENKINS_READ_ONLY_PASSWORD}
 # Example
 #credentials:
 #  system:
@@ -60,10 +60,10 @@ jenkins:
 security:
   queueItemAuthenticator:
     authenticators:
-    - global:
-        strategy:
-          specificUsersAuthorizationStrategy:
-            userid: admin
+      - global:
+          strategy:
+            specificUsersAuthorizationStrategy:
+              userid: admin
 unclassified:
   location:
     url: ${JENKINS_URL}
@@ -73,72 +73,19 @@ unclassified:
     allPipelines: true
 jobs:
   - script: >
-      folder('freestyle')
-  - script: >
-      folder('pipeline')
-  - script: >
-      freeStyleJob('freestyle/seedjob') {
-        steps {
-          jobDsl {
-            scriptText("""
-              pipelineJob('freestyle/seeded-pipeline-1') {
-                definition {
-                  cps {
-                    script (\"""
-                      pipeline {
-                          agent any
-                          stages {
-                              stage('build') {
-                                  steps {
-                                      sh script: 'echo "Build"'
-                                  }
-                              }
-                              stage('test') {
-                                  steps{
-                                      sh script : 'echo "Test"'
-                                  }
-                              }
-                              stage('publish') {
-                                  steps{
-                                      sh script : 'echo "Publish"'
-                                  }
-                              }
-                          }
-                      }\""".stripIndent()
-                    )
+      freeStyleJob('seedjob') {
+          scm {
+              git {
+                  remote {
+                      url 'https://github.com/aditya-mittal/jenkins-casc.git'
                   }
-                }
+                  branch '*/master'
               }
-              pipelineJob('freestyle/seeded-pipeline-2') {
-                definition {
-                  cps {
-                    script (\"""
-                      pipeline {
-                          agent any
-                          stages {
-                              stage('build') {
-                                  steps {
-                                      sh script: 'echo "Build"'
-                                  }
-                              }
-                              stage('test') {
-                                  steps{
-                                      sh script : 'echo "Test"'
-                                  }
-                              }
-                              stage('publish') {
-                                  steps{
-                                      sh script : 'echo "Publish"'
-                                  }
-                              }
-                          }
-                      }\""".stripIndent()
-                    )
-                  }
-                }
-              }
-            """.stripIndent())
           }
-        }
+          steps {
+              dsl {
+                  external('jenkins-base/casc-configs/seed.groovy')
+              }
+          }
       }
-  - file: /usr/share/jenkins/ref/casc-configs/seed.groovy
+  #- file: /usr/share/jenkins/ref/casc-configs/seed.groovy
