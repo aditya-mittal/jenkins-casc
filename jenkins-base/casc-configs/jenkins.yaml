@@ -77,15 +77,15 @@ jobs:
           scm {
               git {
                   remote {
-                      url 'https://github.com/aditya-mittal/jenkins-casc.git'
+                      url 'https://github.com/aditya-mittal/jenkins-job-dsl.git'
                   }
                   branch '*/master'
               }
           }
           steps {
               dsl {
-                  external('jenkins-base/casc-configs/seed.groovy')
+                  external('src/main/groovy/com/dsl/bootstrap.groovy')
               }
           }
       }
-  #- file: /usr/share/jenkins/ref/casc-configs/seed.groovy
+  #- file: /usr/share/jenkins/ref/casc-configs/seed-example.groovy
