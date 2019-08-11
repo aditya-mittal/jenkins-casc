@@ -83,8 +83,11 @@ jobs:
               }
           }
           steps {
+              mkdir -p jenkins-jobs/lib
+              curl 'https://repo1.maven.org/maven2/org/yaml/snakeyaml/1.23/snakeyaml-1.23.jar' -o jenkins-jobs/lib/snakeyaml.jar
               dsl {
-                  external('src/main/groovy/com/dsl/bootstrap.groovy')
+                  external('src/main/groovy/com/dsl/bootstrap.groovy'),
+                  additionalClasspath: "${WORKSPACE}/jenkins-jobs/lib/snakeyaml.jar"
               }
           }
       }
